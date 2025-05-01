@@ -23,19 +23,22 @@ The contract uses the following storage layout:
 
 1. Install Foundry if it's not already installed:
 
-```curl -L https://foundry.paradigm.xyz | bash
-   foundryup
+```
+    curl -L https://foundry.paradigm.xyz | bash
+    foundryup
 ```
 
 2. Clone the repository:
 
-```git clone https://github.com/OdionOseiwe/YulERC721.git
-   cd YulERC721
+```
+    git clone https://github.com/OdionOseiwe/YulERC721.git
+    cd YulERC721
 ```
 
 3. Install dependencies:
 
-```forge install
+```
+    forge install
 ```
 
 ## Usage 
