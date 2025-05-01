@@ -1,29 +1,9 @@
-# Yul developer experience
+# YulERC721 - A Gas-Optimized ERC721 Implementation in Yul
 
-## Repository installation
+## Overview
+YulERC721 is a highly optimized implementation of the ERC721 non-fungible token standard written entirely in Yul (the intermediate language for the Ethereum Virtual Machine). This project demonstrates how to write efficient smart contracts at a low level while maintaining full compatibility with the ERC721 standard.
 
-1. Install Foundry
-```
-curl -L https://foundry.paradigm.xyz | bash
-foundryup
-```
-
-2. Install solidity compiler
-https://docs.soliditylang.org/en/latest/installing-solidity.html#installing-the-solidity-compiler
-
-3. Build Yul contracts and check tests pass
-```
-forge test
-```
-
-## Running tests
-
-Run tests (compiles yul then fetch resulting bytecode in test)
-```
-forge test
-```
-
-To see the console logs during tests
-```
-forge test -vvv
-```
+## Features
+- Full ERC721 Compliance: Implements all required ERC721 functions
+- Gas Optimization: Significant gas savings compared to Solidity implementations
+- Yul Implementation: Written entirely in Yul for maximum control over EVM operations
