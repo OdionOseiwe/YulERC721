@@ -149,6 +149,7 @@ contract BasicERC721 is IERC721, IERC721Metadata {
         emit Approval(ownerOf(tokenId), to, tokenId);
     }
 
+    
     function _setApprovalForAll(address owner, address operator, bool approved) internal {
         require(owner != operator, "ERC721: approve to caller");
         _operatorApprovals[owner][operator] = approved;

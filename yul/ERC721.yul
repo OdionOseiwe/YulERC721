@@ -302,79 +302,49 @@ object "ERC721" {
         }
 
         function _checkOnERC721Received(from, to, tokenId, data) -> ret {
-            // Check if the recipient is a contract (code length > 0)
-            if iszero(iszero(extcodesize(to))) {
-                // Allocate memory for the call
-                let memPtr := mload(0x40)
-                
-                // Store the function selector for onERC721Received
-                // onERC721Received(address,address,uint256,bytes)
-                mstore(memPtr, 0x150b7a0200000000000000000000000000000000000000000000000000000000)
-                
-                // Store the parameters
-                mstore(add(memPtr, 0x04), caller())         // msg.sender
-                mstore(add(memPtr, 0x24), from)             // from
-                mstore(add(memPtr, 0x44), tokenId)          // tokenId
-                mstore(add(memPtr, 0x64), 0x80)              // data offset
-                
-                // Store data length
-                let dataLength := mload(data)
-                mstore(add(memPtr, 0x84), dataLength)
-                
-                // Copy data contents if length > 0
-                if gt(dataLength, 0) {
-                    // Calculate data position
-                    let dataPtr := add(data, 0x20)
-                    // Copy data to memory
-                    let dataEnd := add(dataPtr, dataLength)
-                    let memDataPtr := add(memPtr, 0xa4)
-                    for { } lt(dataPtr, dataEnd) { dataPtr := add(dataPtr, 0x20) } {
-                        mstore(memDataPtr, mload(dataPtr))
-                        memDataPtr := add(memDataPtr, 0x20)
-                    }
-                }
-                
-                // Call the contract
-                let success := call(
-                    gas(),           // gas
-                    to,              // address
-                    0,               // value
-                    memPtr,         // input ptr
-                    add(0xa4, dataLength), // input length
-                    0,               // output ptr
-                    0x20             // output length (32 bytes for retval)
-                )
-                
-                // Check if call succeeded
-                if success {
-                    // Check if return value matches expected selector
-                    ret := eq(mload(0), 0x150b7a0200000000000000000000000000000000000000000000000000000000)
-                }
-                
-                // Handle failure cases
-                if iszero(success) {
-                    // Try to get the revert reason
-                    returndatacopy(0, 0, returndatasize())
-                    
-                    // Check if there's a revert reason
-                    if iszero(returndatasize()) {
-                        // No reason - revert with standard message
-                        mstore(0, shl(224, 0x08c379a0)) // Error selector
-                        mstore(4, 0x20)                  // String offset
-                        mstore(0x24, 0x22)               // String length
-                        mstore(0x44, "ERC721: transfer Error")
-                        revert(0, 0x64)
-                    }
-                    
-                    // Revert with the returned reason
-                    revert(0, returndatasize())
-                }
+            if iszero(extcodesize(to)) { 
+                ret := 1  
+                return(0,0) 
             }
-            
-            // For non-contract addresses, return true
-            if iszero(extcodesize(to)) {
-                ret := 1
+        
+            let memPtr := mload(0x40)
+        
+            // Store function selector (onERC721Received)
+            mstore(memPtr, 0x150b7a02)
+        
+            // Store parameters
+            mstore(add(memPtr, 0x04), caller())  // operator (msg.sender)
+            mstore(add(memPtr, 0x24), from)      // from address
+            mstore(add(memPtr, 0x44), tokenId)   // tokenId
+            mstore(add(memPtr, 0x64), 0x80)      // data offset position
+        
+            // Because its bytes, We load the length first
+            let dataLength := mload(data)
+            mstore(add(memPtr, 0x84), dataLength) // data length
+        
+            /// For basic 32 bytes only, else you loop 
+            if gt(dataLength, 0) {
+                mstore(add(memPtr, 0xa4), mload(add(data, 0x20)))
             }
+        
+            // Make the call
+            let success := call(
+                gas(),to,0,memPtr,add(0xa4, dataLength),0,0x20                       
+            )
+        
+            if success {
+                // Check if return value matches expected selector
+                ret := eq(mload(0), 0x150b7a02)
+            }
+
+            if iszero(success){
+                mstore(0, shl(224, 0x08c379a0)) 
+                mstore(4, 0x20)                  
+                mstore(0x24, 0x22)               
+                mstore(0x44, "ERC721: transfer Error")
+                revert(0, 0x64)
+            }
+
         }
 
 
