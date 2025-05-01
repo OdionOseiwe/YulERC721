@@ -42,7 +42,9 @@ The contract uses the following storage layout:
 ```
 
 ## Usage 
-forge test -vvv
+```
+    forge test -vvv
+```
 
 ## Contributing
 Contributions are welcome! Please open an issue or pull request for any improvements or bug fixes.
